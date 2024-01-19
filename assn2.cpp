@@ -10,6 +10,7 @@ Timothy Mah C++ module assignment 2
 #include <limits>
 #include <cctype>
 #include <algorithm>
+#include <cctype>
 
 using namespace std;
 
@@ -17,8 +18,8 @@ using namespace std;
 void menuprinter()
 {
     cout << "\n\n\n";
-    cout << "Student ID:"  << "\t10258663\n";
-    cout << "Student name:"  << "\tTimothy Mah\n";
+    cout << "Student ID:" << "\t10258663\n";
+    cout << "Student name:" << "\tTimothy Mah\n";
     cout << "------------------------------------------------------\n";
     cout << "Welcome to Assignment 2 program!\n\n";
     cout << "1)" << "\tInput sensor data\n";
@@ -34,7 +35,7 @@ int main()
 {
     int progflow = 1;
     int menuchoice = 0;
-    string gobackmsg = " complete!\n Press ENTER to go back to main menu...";
+    string invalidinp = "Sorry I do not understand :( Please try again!\n\n";
 
     while (progflow == 1)
     {
@@ -43,8 +44,8 @@ int main()
         while (!(cin >> menuchoice)) 
         {
             cin.clear();  // Clear the error flag
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-            cout << "Invalid input! Please try again...\n";
+            cin.sync(); // Clear the input buffer
+            cout << invalidinp;
             menuprinter();
         }
         switch (menuchoice)
@@ -55,45 +56,106 @@ int main()
                 string specialtype;
                 int x;
                 int y;
+                int radius;
+                
 
                 cout << ">>>>>>>>>>>>\t"<< "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
                 cout << "[Input sensor data]\n";
-                cout << "Please enter name of the shape:\t";
-                getline(cin, shape);
-                // validate input
+                
+                // validate name of shape
                 while (true)
                 {
-                    if (!shape.empty() && all_of(shape.begin(), shape.end(), ::isalpha))
+                    cout << "Please enter name of the shape:\t";
+                    getline(cin >> ws, shape); //ignore whitespace
+                    // case insensitive user input
+                    transform(shape.begin(), shape.end(), shape.begin(), ::tolower);
+                    if (shape == "square" || shape == "rectangle" || shape == "circle")
                     {
-                        //some logic with user input shape name
-                        cout << "Please enter x-coordinate:\t";
-                        // validate if x is integer
+                        //TODO some logic with user input shape name
+                        cout << "yep! the shape: " << shape << " is correct!\n";
                         break;
                     }
                     else
                     {
+                        cout << invalidinp;
+                        cin.sync(); // Clear the input buffer
                         cin.clear();  // Clear the error flag
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-                        cout << "Sorry I do not understand :( Please try again!\n";
                     }
+                    
                 }
+                
                 cout << "\n\n";
-                cout << "Please enter special type: ";
-                getline(cin, specialtype);
+                
                 // validate input
                 while (true)
                 {
+                    cout << "Please enter special type: ";
+                    getline(cin >> ws, specialtype); //ignore whitespace
+                    // case insensitive user input
+                    transform(specialtype.begin(), specialtype.end(), specialtype.begin(), ::tolower);
                     if (specialtype == "ws" || specialtype == "ns")
                     {
-                        //some logic with user input special type
+                        //TODO some logic with user input special type WS
+                        cout << "yep! the special type: " << specialtype << " is correct!\n";
                         break;
                     }
                     else
                     {
+                        cout << invalidinp;
+                        cin.sync(); // Clear the input buffer
                         cin.clear();  // Clear the error flag
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-                        cout << "Sorry I do not understand :( Please try again!\n";
                     }
+
+                }
+                cout << "\n\n";
+                // check if shape is circle or not
+                if (shape == "circle")
+                {
+                    //TODO some logic with circle
+                    cout << "yep! this is a circle\n";
+                    while (true)
+                    {
+                        cout << "Please enter x coordinate of center: ";
+                        cin >> x;
+                        // check if x is an integer
+                        if (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.sync(); // Clear the input buffer
+                            cin.clear();  // Clear the error flag
+                        }
+                        else
+                        {
+                            //TODO some logic with x coordinate of circle
+                            cout << "yep! the x coord of " << x << " is correct!\n";
+                            break;
+                        }
+                    }
+                    while (true)
+                    {
+                        cout << "Please enter y coordinate of center: ";
+                        cin >> y;
+                        // check if y is an integer
+                        if (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.sync(); // Clear the input buffer
+                            cin.clear();  // Clear the error flag
+                        }
+                        else
+                        {
+                            //TODO some logic with y coordinate of circle
+                            cout << "yep! the y coord of " << x << " is correct!\n";
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    //some logic with non cricle shape
+                    
+                    
+
                 }
 
                 
@@ -117,7 +179,7 @@ int main()
             break;
             case 5:
             {
-
+                progflow = 0;
             }
             break;
             default:
