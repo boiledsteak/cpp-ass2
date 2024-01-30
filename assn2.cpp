@@ -124,8 +124,25 @@ class Square : public ShapeTwoD
 
         double computeArea() const override
         {
-            return 1.0;
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto& coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Calculate and return the area using the min and max coordinates
+            int sideLength = max(maxX - minX, maxY - minY);
+            return static_cast<double>(sideLength * sideLength);
         }
+
 
         bool isPointInShape(int x, int y) const override
         {
@@ -603,7 +620,11 @@ int main()
             break;
             case 2:
             {
-                
+                cout << "Computing and printing area for all shapes:\n";
+                for (const ShapeTwoD* shape : shapes)
+                {
+                    cout << "Area of " << shape->getName() << ": " << shape->computeArea() << endl;
+                }
             }
             break;
             case 3:
