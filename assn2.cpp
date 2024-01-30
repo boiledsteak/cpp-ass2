@@ -72,14 +72,21 @@ class Circle : public ShapeTwoD
 
         double computeArea() const override
         {
-            return 5*5; // Placeholder logic
+            return M_PI * radius * radius; // Placeholder logic
         }
 
         bool isPointInShape(int x, int y) const override
         {
-            // Placeholder logic
-            return true;
+            int centerX = getCoordinates()[0].first; // Assuming the first coordinate is the center for the circle
+            int centerY = getCoordinates()[0].second;
+
+            // Check if the distance from the point (x, y) to the center is less than the radius
+            bool insideCircle = pow(x - centerX, 2) + pow(y - centerY, 2) < pow(radius, 2);
+
+            // Exclude the center coordinate and return the result
+            return insideCircle && !(x == centerX && y == centerY);
         }
+
 
         bool isPointOnShape(int x, int y) const override
         {
@@ -130,7 +137,7 @@ class Square : public ShapeTwoD
             int maxX = numeric_limits<int>::min();
             int maxY = numeric_limits<int>::min();
 
-            for (const auto& coord : getCoordinates())
+            for (const auto &coord : getCoordinates())
             {
                 minX = min(minX, coord.first);
                 minY = min(minY, coord.second);
@@ -139,8 +146,9 @@ class Square : public ShapeTwoD
             }
 
             // Calculate and return the area using the min and max coordinates
-            int sideLength = max(maxX - minX, maxY - minY);
-            return static_cast<double>(sideLength * sideLength);
+            int length = maxX - minX;
+            int width = maxY - minY;
+            return static_cast<double>(length * width);
         }
 
 
@@ -193,14 +201,51 @@ class Rectangle : public ShapeTwoD
 
         double computeArea() const override
         {
-            return 1.0;
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto &coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Calculate and return the area using the min and max coordinates
+            int length = maxX - minX;
+            int width = maxY - minY;
+            return static_cast<double>(length * width);
         }
+
 
         bool isPointInShape(int x, int y) const override
         {
-            // Placeholder logic
-            return true;
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto &coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Check if the point is strictly within the rectangle (excluding the edges)
+            bool insideRectangle = (x > minX) && (x < maxX) && (y > minY) && (y < maxY);
+
+            return insideRectangle;
         }
+
+
+
 
         bool isPointOnShape(int x, int y) const override
         {
@@ -245,8 +290,23 @@ class Cross : public ShapeTwoD
 
         double computeArea() const override
         {
-            return 5 * 8; // Placeholder logic
+            double rectangleArea = 0.0;
+            vector<pair<int, int>> sortedCoordinates = coordinates;
+            sort(sortedCoordinates.begin(), sortedCoordinates.end());
+
+            for (int i = 0; i < numCoordinates; i += 4)
+            {
+                int x1 = sortedCoordinates[i].first;
+                int y1 = sortedCoordinates[i].second;
+                int x2 = sortedCoordinates[i + 2].first;
+                int y2 = sortedCoordinates[i + 2].second;
+
+                rectangleArea += abs(x2 - x1) * abs(y2 - y1);
+            }
+
+            return rectangleArea;
         }
+
 
         bool isPointInShape(int x, int y) const override
         {
@@ -630,14 +690,47 @@ int main()
             case 3:
             {
                 cout << "Printing values stored in all shapes:\n";
-                for (const ShapeTwoD* shape : shapes)
+                for (const ShapeTwoD *shape : shapes)
                 {
                     cout << shape->toString() << endl;
+
+                    // Print all coordinates inside the area of the shape
+                    cout << "All coordinates inside the area: ";
+                    int minX = 0;
+                    int minY = 0;
+                    int maxX = 12;
+                    int maxY = 8;
+
+                    for (const auto &coord : shape->getCoordinates())
+                    {
+                        if (shape->isPointInShape(coord.first, coord.second))
+                        {
+                            cout << "(" << coord.first << ", " << coord.second << ") ";
+
+                            // Update min and max coordinates for the bounding box
+                            minX = min(minX, coord.first);
+                            minY = min(minY, coord.second);
+                            maxX = max(maxX, coord.first);
+                            maxY = max(maxY, coord.second);
+                        }
+                    }
+
+                    // Print additional coordinates inside the area that were not input by the user
+                    for (int x = minX; x <= maxX; ++x)
+                    {
+                        for (int y = minY; y <= maxY; ++y)
+                        {
+                            if (shape->isPointInShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
+                            {
+                                cout << "(" << x << ", " << y << ") ";
+                            }
+                        }
+                    }
+
+                    cout << endl;
                 }
             }
             break;
-
-
             case 4:
             {
 
