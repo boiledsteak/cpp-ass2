@@ -151,11 +151,26 @@ class Square : public ShapeTwoD
             return static_cast<double>(length * width);
         }
 
-
         bool isPointInShape(int x, int y) const override
         {
-            // Placeholder logic
-            return true;
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto &coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Check if the point is strictly within the rectangle (excluding the edges)
+            bool insideRectangle = (x > minX) && (x < maxX) && (y > minY) && (y < maxY);
+
+            return insideRectangle;
         }
 
         bool isPointOnShape(int x, int y) const override
@@ -221,7 +236,6 @@ class Rectangle : public ShapeTwoD
             return static_cast<double>(length * width);
         }
 
-
         bool isPointInShape(int x, int y) const override
         {
             // Assuming the input coordinates are in any order, find the min and max coordinates
@@ -243,9 +257,6 @@ class Rectangle : public ShapeTwoD
 
             return insideRectangle;
         }
-
-
-
 
         bool isPointOnShape(int x, int y) const override
         {
