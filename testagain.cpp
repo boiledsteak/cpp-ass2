@@ -1,89 +1,108 @@
-// ... (other code)
-
-class ShapeTwoD 
+case 1:
 {
-    // ... (other code)
+    string shape;
+    string specialtype;
+    int x;
+    int y;
 
-public:
-    // ... (other code)
+    cout << ">>>>>>>>>>>>\t" << "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+    cout << "[Input sensor data]\n";
 
-    // Setter function for name
-    void setName(const string& n) 
+    // validate name of shape
+    while (true)
     {
-        name = n;
+        cout << "Please enter name of the shape:\t";
+        getline(cin >> ws, shape); //ignore whitespace
+        // case insensitive user input
+        transform(shape.begin(), shape.end(), shape.begin(), ::tolower);
+        if (shape == "square" || shape == "rectangle" || shape == "circle" || shape == "cross")
+        {
+            cout << "yep! the shape: " << shape << " is correct!\n";
+            break;
+        }
+        else
+        {
+            cout << invalidinp;
+            cin.sync(); // Clear the input buffer
+            cin.clear(); // Clear the error flag
+        }
     }
 
-    // Setter function for containsWarpSpace
-    void setContainsWarpSpace(bool contains) 
+    cout << "\n\n";
+
+    // validate input
+    while (true)
     {
-        containsWarpSpace = contains;
+        cout << "Please enter special type: ";
+        getline(cin >> ws, specialtype); //ignore whitespace
+        // case insensitive user input
+        transform(specialtype.begin(), specialtype.end(), specialtype.begin(), ::tolower);
+        if (specialtype == "ws" || specialtype == "ns")
+        {
+            cout << "yep! the special type: " << specialtype << " is correct!\n";
+            break;
+        }
+        else
+        {
+            cout << invalidinp;
+            cin.sync(); // Clear the input buffer
+            cin.clear(); // Clear the error flag
+        }
     }
-};
+    cout << "\n\n";
 
-class cross : public ShapeTwoD
-{
-private:
-    int vert;
-
-public:
-    // Public constructor
-    cross() : vert(0) {}
-
-    // Getter method for vert
-    int getVert() const 
+    // Check if shape is circle or not
+    if (shape == "circle")
     {
-        return vert;
+        // TODO: logic for circle
+        cout << "yep! this is a circle\n";
     }
-
-    // Setter method for vert
-    void setVert(int v) 
+    else if (shape == "square" || shape == "rectangle")
     {
-        vert = v;
+        // Create Square object and set its properties
+        Square square;
+        square.setName(shape);
+        square.setContainsWarpSpace(specialtype == "ws");
+
+        // Get coordinates for the square
+        for (int i = 0; i < Square::numCoordinates; ++i)
+        {
+            cout << "Please enter x coordinate for point " << i + 1 << ": ";
+            cin >> x;
+
+            // Validate x coordinate
+            while (cin.fail())
+            {
+                cout << invalidinp;
+                cin.clear();  // Clear the error flag
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                cout << "Please enter x coordinate for point " << i + 1 << ": ";
+                cin >> x;
+            }
+
+            cout << "Please enter y coordinate for point " << i + 1 << ": ";
+            cin >> y;
+
+            // Validate y coordinate
+            while (cin.fail())
+            {
+                cout << invalidinp;
+                cin.clear();  // Clear the error flag
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                cout << "Please enter y coordinate for point " << i + 1 << ": ";
+                cin >> y;
+            }
+
+            // Set coordinates for the square
+            square.setCoordinates({{x, y}}, Square::numCoordinates);
+        }
+
+        // Print information about the square
+        cout << square.toString() << endl;
     }
-};
-
-class square : public ShapeTwoD
-{
-private:
-    int vert;
-
-public:
-    // Public constructor
-    square() : vert(0) {}
-
-    // Getter method for vert
-    int getVert() const 
+    else
     {
-        return vert;
+        // TODO: logic for other shapes
     }
-
-    // Setter method for vert
-    void setVert(int v) 
-    {
-        vert = v;
-    }
-};
-
-class circle : public ShapeTwoD
-{
-private:
-    int radius;
-
-public:
-    // Public constructor
-    circle() : radius(0) {}
-
-    // Getter method for radius
-    int getRadius() const 
-    {
-        return radius;
-    }
-
-    // Setter method for radius
-    void setRadius(int r) 
-    {
-        radius = r;
-    }
-};
-
-// ... (rest of your code)
+}
+break;

@@ -7,178 +7,261 @@ due 8 Feb 2024
 
 =============================*/
 
-#include <iostream>
-#include <string>
 #include <limits>
-#include <cctype>
-#include <algorithm>
-#include <cctype>
+#include <iostream>
+#include <sstream> 
+#include <cmath>   
+#include <string>
 #include <vector>
-#include <map>
+#include <algorithm>
 
 using namespace std;
 
-// my class
-
-// top level parent class
-
-// put in seperate file
-// put constructors and functions in ShapeTwoD.cpp
-// put private and function prototype in ShapeTwoD.h
-
-// put all this in ShapeTwoD.h
-// class ShapeTwoD 
-// {
-//     private:
-//         int id_p; // for testing
-        
-//         string name;
-//         bool containsWarpSpace;
-//         vector<map<int, int>> coords;
-
-//     public: // prototypes
-//         int getId_p();
-//         void setId_p(int id);
-// };
-
-// then in ShapeTwoD.cpp, put all the function logic
-
-// this is how to declare child class that inherits from parent class
-// put this in square.h
-// class square : public ShapeTwoD
-// {
-
-// };
-
 // SEE SLIDES S4F
-
-
-class ShapeTwoD 
+// Parent class
+class ShapeTwoD
 {
     protected:
-        int id_p; // for testing
-        
         string name;
         bool containsWarpSpace;
-        vector<map<int, int>> coords;
+        vector<pair<int, int>> coordinates;
 
     public:
-        // Getter function for id_p
-        int getId_p() 
-        {
-            return id_p;
-        }
+        virtual void print() = 0; 
+        virtual double computeArea() const = 0; 
+        virtual string toString() const = 0;
+        virtual bool isPointInShape(int x, int y) const = 0; 
+        virtual bool isPointOnShape(int x, int y) const = 0;
+        virtual int getNumCoordinates() const = 0; 
+        virtual ~ShapeTwoD() {} // Virtual destructor
 
-        // Setter function for id_p
-        void setId_p(int id) 
+        // Getters and setters for name, containsWarpSpace, and coordinates
+        string getName() const { return name; }
+        void setName(const string &newName) { name = newName; }
+        bool getContainsWarpSpace() const { return containsWarpSpace; }
+        void setContainsWarpSpace(bool warpSpace) { containsWarpSpace = warpSpace; }
+        const vector<pair<int, int>>& getCoordinates() const { return coordinates; }
+        //when setting coordinates, number of coordinates must match each shape's required number
+        void setCoordinates(const vector<pair<int, int>> &newCoordinates, int numCoordinates)
         {
-            id_p = id;
-        }
-        // Setter function for name
-        void setName(string n) 
-        {
-            name = n;
-        }
-
-        // Setter function for containsWarpSpace
-        void setContainsWarpSpace(bool space) 
-        {
-            containsWarpSpace = space;
-    }
-        // other functions
-        /*
-        This is a virtual function that returns a string containing all the values of the attributes in the shape, excluding the array of vertex data. (However, sub-classes of ShapeTwoD must output the array of vertex data, inclusive of any other attribute's values it inherited) 
-        */        
-        string toString()
-        {
-            return;
-        }
-        /*
-        This is a virtual function. It must be override by the sub-classes and implemented individually. 
-        */
-        // recommend tobe pure virtual function
-        // should have function overriding
-        // to calc area of cross -> find the 5 rectangles. big one minus small one
-        double computeArea()
-        {
-
-            return ;
-        }
-
-        /*
-        This is a virtual function. It takes in a [ x, y ] location and returns a boolean value indicating whether the location is totally within the shape's area. It must be over-ridden by the sub-classes and implemented individually. 
-        */
-        // point is inside the shape 
-        bool isPointInShape(int x, int y)
-        {
-            
-            return;
-        }
-        /*
-        This is a virtual function. It takes in a [ x, y ] location and returns a boolean value indicating whether the location is found on any lines joining the shapes' vertices! It must be over-ridden by the sub­classes and implemented individually. 
-        */
-        // point is touching the border / edge of the shape
-        bool isPointOnShape(int x, int y)
-        {
-            
-            return;
+                coordinates.insert(coordinates.end(), newCoordinates.begin(), newCoordinates.end());
         }
 };
 
-class cross : public ShapeTwoD
+// Child class Circle
+class Circle : public ShapeTwoD
 {
-    private:
-        int vert=12;
-
-    public:
-        // Public constructor. Shortcut syntax to make code shorter
-        cross() : vert(0) {}
-
-        // Getter method
-        int getVert() const 
-        {
-            return vert;
-        }
-};
-
-class square : public ShapeTwoD
-{
-    private:
-        int vert=4;
-    public:
-        // Public constructor. Shortcut syntax to make code shorter
-        square() : vert(0) {}
-
-        // Getter method
-        int getVert() const 
-        {
-            return vert;
-        }
-};
-
-class circle : public ShapeTwoD
-{
-    private:
+    protected:
         int radius;
-    
-    public:
-        // Public constructor. Shortcut syntax to make code shorter
-        circle() : radius(0) {}
+        int numCoordinates = 1; 
 
-        // Getter method
-        int getRadius() const 
+    public:
+        // Default constructor
+        Circle() {}
+
+        void print() override
         {
-            return radius;
+            cout << "Circle with radius " << radius << ", named " << getName() << endl;
         }
 
-        // Setter method
-        void setRadius(int r) 
+        
+        void setRadius(int r)
         {
             radius = r;
         }
 
+        double computeArea() const override
+        {
+            return 5*5; // Placeholder logic
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", Radius = " << radius << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
 };
 
+// Child class Square
+class Square : public ShapeTwoD
+{
+    protected:
+        int numCoordinates = 4;
+
+    public:
+        // Default constructor
+        Square() {}
+
+        void print() override
+        {
+            cout << "Square named " << getName() << endl;
+        }
+
+        double computeArea() const override
+        {
+            return 1.0;
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
+};
+
+// Child class Rectangle
+class Rectangle : public ShapeTwoD
+{
+    protected:
+        int numCoordinates = 4;
+
+    public:
+        // Default constructor
+        Rectangle() {}
+
+        void print() override
+        {
+            cout << "Rectangle named " << getName() << endl;
+        }
+
+        double computeArea() const override
+        {
+            return 1.0;
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
+};
+
+// Child class Cross
+class Cross : public ShapeTwoD
+{
+    protected:
+        int numCoordinates = 12;
+
+    public:
+        // Default constructor
+        Cross() {}
+
+        void print() override
+        {
+            cout << "Cross named " << getName() << endl;
+        }
+
+        double computeArea() const override
+        {
+            return 5 * 8; // Placeholder logic
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
+};
 
 
 void menuprinter()
@@ -206,6 +289,11 @@ int main()
     int progflow = 1;
     int menuchoice = 0;
     string invalidinp = "Sorry I do not understand :( Please try again!\n\n";
+
+    const int arraySize = 99;
+    // Create an array of Shape pointers using new
+    vector<ShapeTwoD*> shapes;
+
 
     while (progflow == 1)
     {
@@ -282,54 +370,198 @@ int main()
                 // check if shape is circle or not
                 if (shape == "circle")
                 {
-                    //TODO some logic with circle
-                    cout << "yep! this is a circle\n";
+                    // Create Circle object and set its properties
+                    Circle* circle = new Circle();
+                    circle->setName(shape);
+                    circle->setContainsWarpSpace(specialtype == "ws");
+
+                    // Get the radius of the circle
+                    while (true)
+                    {
+                        cout << "Please enter the radius of the circle: ";
+                        cin >> radius;
+
+                        // Validate radius
+                        while (cin.fail() || radius <= 0)
+                        {
+                            cout << invalidinp;
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter a valid radius for the circle: ";
+                            cin >> radius;
+                        }
+
+                        // Set the radius for the circle
+                        circle->setRadius(radius);
+                        break;
+                    }
+
+                    // Get the center coordinates of the circle
                     while (true)
                     {
                         cout << "Please enter x coordinate of center: ";
                         cin >> x;
-                        // check if x is an integer
-                        if (cin.fail())
+
+                        // Validate x coordinate
+                        while (cin.fail())
                         {
                             cout << invalidinp;
-                            cin.sync(); // Clear the input buffer
                             cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter x coordinate for center: ";
+                            cin >> x;
                         }
-                        else
-                        {
-                            //TODO some logic with x coordinate of circle
-                            cout << "yep! the x coord of " << x << " is correct!\n";
-                            break;
-                        }
-                    }
-                    while (true)
-                    {
+
                         cout << "Please enter y coordinate of center: ";
                         cin >> y;
-                        // check if y is an integer
-                        if (cin.fail())
+
+                        // Validate y coordinate
+                        while (cin.fail())
                         {
                             cout << invalidinp;
-                            cin.sync(); // Clear the input buffer
                             cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter y coordinate for center: ";
+                            cin >> y;
                         }
-                        else
-                        {
-                            //TODO some logic with y coordinate of circle
-                            cout << "yep! the y coord of " << x << " is correct!\n";
-                            break;
-                        }
+
+                        // Set the center coordinates for the circle
+                        circle->setCoordinates({{x, y}}, circle->getNumCoordinates());
+                        break;
                     }
+
+                    // Add the created Circle object to the vector
+                    shapes.push_back(circle);
                 }
-                else
+
+                else if (shape == "square")
                 {
-                    //TODO some logic with non cricle shape
-                    
-                    
+                    // Create Square object and set its properties
+                    Square* square = new Square();
+                    square->setName(shape);
+                    square->setContainsWarpSpace(specialtype == "ws");
+
+                    for (int i = 0; i < square->getNumCoordinates(); ++i)
+                    {
+                        cout << "Please enter x coordinate for point " << i + 1 << ": ";
+                        cin >> x;
+
+                        // Validate x coordinate
+                        while (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter x coordinate for point " << i + 1 << ": ";
+                            cin >> x;
+                        }
+
+                        cout << "Please enter y coordinate for point " << i + 1 << ": ";
+                        cin >> y;
+
+                        // Validate y coordinate
+                        while (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter y coordinate for point " << i + 1 << ": ";
+                            cin >> y;
+                        }
+
+                        // Add coordinates to the vector for the square
+                        square->setCoordinates({{x, y}}, square->getNumCoordinates());
+                    }
+
+                    // Add the created Square object to the vector
+                    shapes.push_back(square);
 
                 }
+                else if (shape == "rectangle")
+                {
+                    // Create Rectangle object and set its properties
+                    Rectangle* rectangle = new Rectangle();
+                    rectangle->setName(shape);
+                    rectangle->setContainsWarpSpace(specialtype == "ws");
 
-                
+                    for (int i = 0; i < rectangle->getNumCoordinates(); ++i)
+                    {
+                        cout << "Please enter x coordinate for point " << i + 1 << ": ";
+                        cin >> x;
+
+                        // Validate x coordinate
+                        while (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter x coordinate for point " << i + 1 << ": ";
+                            cin >> x;
+                        }
+
+                        cout << "Please enter y coordinate for point " << i + 1 << ": ";
+                        cin >> y;
+
+                        // Validate y coordinate
+                        while (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter y coordinate for point " << i + 1 << ": ";
+                            cin >> y;
+                        }
+
+                        // Set coordinates for the rectangle
+                        rectangle->setCoordinates({{x, y}}, rectangle->getNumCoordinates());
+                    }
+
+                    // Add the created Rectangle object to the vector
+                    shapes.push_back(rectangle);
+                }
+
+                else if (shape == "cross")
+                {
+                    // Create Cross object and set its properties
+                    Cross* cross = new Cross();
+                    cross->setName(shape);
+                    cross->setContainsWarpSpace(specialtype == "ws");
+
+                    for (int i = 0; i < cross->getNumCoordinates(); ++i)
+                    {
+                        cout << "Please enter x coordinate for point " << i + 1 << ": ";
+                        cin >> x;
+
+                        // Validate x coordinate
+                        while (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter x coordinate for point " << i + 1 << ": ";
+                            cin >> x;
+                        }
+
+                        cout << "Please enter y coordinate for point " << i + 1 << ": ";
+                        cin >> y;
+
+                        // Validate y coordinate
+                        while (cin.fail())
+                        {
+                            cout << invalidinp;
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << "Please enter y coordinate for point " << i + 1 << ": ";
+                            cin >> y;
+                        }
+
+                        // Set coordinates for the cross
+                        cross->setCoordinates({{x, y}}, cross->getNumCoordinates());
+                    }
+
+                    // Add the created Cross object to the vector
+                    shapes.push_back(cross);
+                }
 
             }
             break;
@@ -340,9 +572,15 @@ int main()
             break;
             case 3:
             {
-
+                cout << "Printing values stored in all shapes:\n";
+                for (const ShapeTwoD* shape : shapes)
+                {
+                    cout << shape->toString() << endl;
+                }
             }
             break;
+
+
             case 4:
             {
 
@@ -358,5 +596,11 @@ int main()
             break;
         }
     }
+    // Clean up memory using delete
+    for (ShapeTwoD* shape : shapes)
+    {
+        delete shape;
+    }
+    
     return 0;
 }
