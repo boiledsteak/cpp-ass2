@@ -90,9 +90,14 @@ class Circle : public ShapeTwoD
 
         bool isPointOnShape(int x, int y) const override
         {
-            // Placeholder logic
-            return true;
+            int centerX = getCoordinates()[0].first; // Assuming the first coordinate is the center for the circle
+            int centerY = getCoordinates()[0].second;
+
+            // Check if the point (x, y) is on the north, south, east, or west points of the circle
+            return (x == centerX && (y == centerY + radius || y == centerY - radius)) ||
+                (y == centerY && (x == centerX + radius || x == centerX - radius));
         }
+
 
         string toString() const override
         {
@@ -175,8 +180,27 @@ class Square : public ShapeTwoD
 
         bool isPointOnShape(int x, int y) const override
         {
-            // Placeholder logic
-            return true;
+            // Iterate over each pair of consecutive coordinates to check if the point is on any edge
+            for (int i = 0; i < numCoordinates; ++i)
+            {
+                int x1 = getCoordinates()[i].first;
+                int y1 = getCoordinates()[i].second;
+                int x2 = getCoordinates()[(i + 1) % numCoordinates].first; // Wrap around to the first coordinate for the last edge
+                int y2 = getCoordinates()[(i + 1) % numCoordinates].second;
+
+                // Check if the point is on the line segment defined by (x1, y1) and (x2, y2)
+                if ((x >= min(x1, x2) && x <= max(x1, x2)) && (y >= min(y1, y2) && y <= max(y1, y2)))
+                {
+                    // Check if the point is on the edge (excluding the corners)
+                    if ((x == x1 || x == x2) && (y > min(y1, y2) && y < max(y1, y2)) ||
+                        (y == y1 || y == y2) && (x > min(x1, x2) && x < max(x1, x2)))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         string toString() const override
