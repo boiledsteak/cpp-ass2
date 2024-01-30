@@ -18,6 +18,9 @@ due 8 Feb 2024
 using namespace std;
 
 // SEE SLIDES S4F
+
+//  TODO figure out what does the toString in parent need to print and what the toString in child need to print
+
 // Parent class
 class ShapeTwoD
 {
