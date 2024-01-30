@@ -1,261 +1,264 @@
 #include <iostream>
-#include <sstream> // For stringstream
-#include <cmath>   // For M_PI
+#include <sstream> 
+#include <cmath>   
 #include <string>
-#include <vector>  // For vector
+#include <vector>  
 
 using namespace std;
 
 // Parent class
 class Shape
 {
-protected:
-    string name;
-    bool containsWarpSpace;
-    vector<pair<int, int>> coordinates;
+    protected:
+        string name;
+        bool containsWarpSpace;
+        vector<pair<int, int>> coordinates;
 
-public:
-    virtual void print() = 0; // Pure virtual function
-    virtual double computeArea() const = 0; // Virtual function for area
-    virtual string toString() const = 0; // Virtual function for string representation
-    virtual bool isPointInShape(int x, int y) const = 0; // Virtual function for checking if a point is in the shape
-    virtual bool isPointOnShape(int x, int y) const = 0; // Virtual function for checking if a point is on the shape
-    virtual int getNumCoordinates() const = 0; // Virtual function to get the number of coordinates
-    virtual ~Shape() {} // Virtual destructor
+    public:
+        virtual void print() = 0; 
+        virtual double computeArea() const = 0; 
+        virtual string toString() const = 0;
+        virtual bool isPointInShape(int x, int y) const = 0; 
+        virtual bool isPointOnShape(int x, int y) const = 0;
+        virtual int getNumCoordinates() const = 0; 
+        virtual ~Shape() {} // Virtual destructor
 
-    // Getters and setters for name, containsWarpSpace, and coordinates
-    string getName() const { return name; }
-    void setName(const string &newName) { name = newName; }
-    bool getContainsWarpSpace() const { return containsWarpSpace; }
-    void setContainsWarpSpace(bool warpSpace) { containsWarpSpace = warpSpace; }
-    const vector<pair<int, int>>& getCoordinates() const { return coordinates; }
-    void setCoordinates(const vector<pair<int, int>>& newCoordinates) { coordinates = newCoordinates; }
+        // Getters and setters for name, containsWarpSpace, and coordinates
+        string getName() const { return name; }
+        void setName(const string &newName) { name = newName; }
+        bool getContainsWarpSpace() const { return containsWarpSpace; }
+        void setContainsWarpSpace(bool warpSpace) { containsWarpSpace = warpSpace; }
+        const vector<pair<int, int>>& getCoordinates() const { return coordinates; }
+        void setCoordinates(const vector<pair<int, int>>& newCoordinates) { coordinates = newCoordinates; }
 };
 
 // Child class Circle
 class Circle : public Shape
 {
-protected:
-    int radius;
-    static const int numCoordinates = 1; 
+    protected:
+        int radius;
+        int numCoordinates = 1; 
 
-public:
-    // Radius constructor
-    Circle(int r) : radius(r) {
-        // Circles have 1 coordinate, which is the center
-        coordinates.push_back({0, 0}); // Placeholder coordinates
-    }
-
-    void print() override
-    {
-        cout << "Circle with radius " << radius << ", named " << getName() << endl;
-    }
-
-    double computeArea() const override
-    {
-        return 5*5; // Placeholder logic
-    }
-
-    bool isPointInShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    bool isPointOnShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    string toString() const override
-    {
-        stringstream ss;
-        ss << "Circle: Name = " << getName() << ", Radius = " << radius << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
-
-        // Add coordinates information
-        ss << ", Coordinates = ";
-        for (const auto& coord : getCoordinates()) {
-            ss << "(" << coord.first << ", " << coord.second << ") ";
+    public:
+        // Radius constructor
+        Circle(int r) : radius(r) 
+        {
+            // Circles have 1 coordinate, which is the center
+            coordinates.push_back({0, 0}); // Placeholder coordinates
         }
 
-        return ss.str();
-    }
+        void print() override
+        {
+            cout << "Circle with radius " << radius << ", named " << getName() << endl;
+        }
 
-    int getNumCoordinates() const override
-    {
-        return numCoordinates;
-    }
+        double computeArea() const override
+        {
+            return 5*5; // Placeholder logic
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Circle: Name = " << getName() << ", Radius = " << radius << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
 };
 
 // Child class Square
 class Square : public Shape
 {
-protected:
-    static const int numCoordinates = 4; // static so that child spawned objects cannot change numCoordinats // i dont quite understand if should be static or const or both
+    protected:
+        int numCoordinates = 4;
 
-public:
-    // Default constructor
-    Square() {
-        // Squares have 4 coordinates
-        coordinates = {{0, 0}, {0, 1}, {1, 0}, {1, 1}}; // Placeholder coordinates
-    }
-
-    void print() override
-    {
-        cout << "Square named " << getName() << endl;
-    }
-
-    double computeArea() const override
-    {
-        return 1.0;
-    }
-
-    bool isPointInShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    bool isPointOnShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    string toString() const override
-    {
-        stringstream ss;
-        ss << "Square: Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
-
-        // Add coordinates information
-        ss << ", Coordinates = ";
-        for (const auto& coord : getCoordinates()) {
-            ss << "(" << coord.first << ", " << coord.second << ") ";
+    public:
+        // Default constructor
+        Square() 
+        {
+            // Squares have 4 coordinates
+            coordinates = {{0, 0}, {0, 1}, {1, 0}, {1, 1}}; // Placeholder coordinates
         }
 
-        return ss.str();
-    }
+        void print() override
+        {
+            cout << "Square named " << getName() << endl;
+        }
 
-    int getNumCoordinates() const override
-    {
-        return numCoordinates;
-    }
+        double computeArea() const override
+        {
+            return 1.0;
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Square: Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
 };
 
 // Child class Rectangle
 class Rectangle : public Shape
 {
-protected:
-    static const int numCoordinates = 4; // static so that child spawned objects cannot change numCoordinats // i dont quite understand if should be static or const or both
+    protected:
+        int numCoordinates = 4;
 
-public:
-    // Default constructor
-    Rectangle() {
-        // Rectangles have 4 coordinates
-        coordinates = {{0, 0}, {0, 1}, {1, 0}, {1, 1}}; // Placeholder coordinates
-    }
-
-    void print() override
-    {
-        cout << "Rectangle named " << getName() << endl;
-    }
-
-    double computeArea() const override
-    {
-        return 1.0;
-    }
-
-    bool isPointInShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    bool isPointOnShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    string toString() const override
-    {
-        stringstream ss;
-        ss << "Rectangle: Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
-
-        // Add coordinates information
-        ss << ", Coordinates = ";
-        for (const auto& coord : getCoordinates()) {
-            ss << "(" << coord.first << ", " << coord.second << ") ";
+    public:
+        // Default constructor
+        Rectangle() {
+            // Rectangles have 4 coordinates
+            coordinates = {{0, 0}, {0, 1}, {1, 0}, {1, 1}}; // Placeholder coordinates
         }
 
-        return ss.str();
-    }
+        void print() override
+        {
+            cout << "Rectangle named " << getName() << endl;
+        }
 
-    int getNumCoordinates() const override
-    {
-        return numCoordinates;
-    }
+        double computeArea() const override
+        {
+            return 1.0;
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Rectangle: Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
 };
 
 // Child class Cross
 class Cross : public Shape
 {
-protected:
-    static const int numCoordinates = 12; // i dont quite understand if should be static or const or both //TODO
+    protected:
+        int numCoordinates = 12;
 
-public:
-    // Default constructor
-    Cross() {
-        // Crosses have 12 coordinates
-        coordinates = {
-            {0, -1}, {0, 0}, {0, 1},
-            {-1, 0}, {0, 0}, {1, 0},
-            {-1, -1}, {0, 0}, {1, 1},
-            {-1, 1}, {0, 0}, {1, -1}
-        }; // Placeholder coordinates
-    }
-
-    void print() override
-    {
-        cout << "Cross named " << getName() << endl;
-    }
-
-    double computeArea() const override
-    {
-        return 5 * 8; // Placeholder logic
-    }
-
-    bool isPointInShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    bool isPointOnShape(int x, int y) const override
-    {
-        // Placeholder logic
-        return true;
-    }
-
-    string toString() const override
-    {
-        stringstream ss;
-        ss << "Cross: Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
-
-        // Add coordinates information
-        ss << ", Coordinates = ";
-        for (const auto& coord : getCoordinates()) {
-            ss << "(" << coord.first << ", " << coord.second << ") ";
+    public:
+        // Default constructor
+        Cross() 
+        {
+            // Crosses have 12 coordinates
+            coordinates = {
+                {0, -1}, {0, 0}, {0, 1},
+                {-1, 0}, {0, 0}, {1, 0},
+                {-1, -1}, {0, 0}, {1, 1},
+                {-1, 1}, {0, 0}, {1, -1}
+            }; // Placeholder coordinates
         }
 
-        return ss.str();
-    }
+        void print() override
+        {
+            cout << "Cross named " << getName() << endl;
+        }
 
-    int getNumCoordinates() const override
-    {
-        return numCoordinates;
-    }
+        double computeArea() const override
+        {
+            return 5 * 8; // Placeholder logic
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Cross: Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
 };
 
 int main()
