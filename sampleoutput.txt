@@ -1,0 +1,25 @@
+shape [0]
+name:	rectangle
+special type: NS
+area: 8 units square
+vertices:
+point [0]: (x,y)
+point [1]: (x,y) //placeholder values for x and y
+// an so on
+
+points on perimeter: (x,y), (x,y) //placeholder values for x and y
+
+points within shape: (x,y), (x,y) //placeholder values for x and y
+
+shape [2]
+name:	square
+special type: WS
+area: 12 units square
+vertices:
+point [0]: (x,y)
+point [1]: (x,y) //placeholder values for x and y
+// an so on
+
+points on perimeter: (x,y), (x,y) //placeholder values for x and y
+
+points within shape: (x,y), (x,y) //placeholder values for x and y
