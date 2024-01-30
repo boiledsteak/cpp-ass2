@@ -263,7 +263,6 @@ class Cross : public ShapeTwoD
         }
 };
 
-
 void menuprinter()
 {
     cout << "\n\n\n";
@@ -288,7 +287,7 @@ int main()
 {
     int progflow = 1;
     int menuchoice = 0;
-    string invalidinp = "Sorry I do not understand :( Please try again!\n\n";
+    string invalidinp = "\nSorry I do not understand :( Please try again!\n\n";
 
     const int arraySize = 99;
     // Create an array of Shape pointers using new
@@ -299,13 +298,14 @@ int main()
     {
         menuprinter();
         // input validation
-        while (!(cin >> menuchoice)) 
+        while (!(cin >> menuchoice) || cin.peek() != '\n') 
         {
-            cin.clear();  // Clear the error flag
-            cin.sync(); // Clear the input buffer
             cout << invalidinp;
+            cin.clear();  // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
             menuprinter();
         }
+
         switch (menuchoice)
         {
             case 1:
@@ -329,8 +329,6 @@ int main()
                     transform(shape.begin(), shape.end(), shape.begin(), ::tolower);
                     if (shape == "square" || shape == "rectangle" || shape == "circle" || shape == "cross")
                     {
-                        //TODO some logic with user input shape name
-
                         cout << "yep! the shape: " << shape << " is correct!\n";
                         break;
                     }
@@ -361,13 +359,13 @@ int main()
                     else
                     {
                         cout << invalidinp;
-                        cin.sync(); // Clear the input buffer
-                        cin.clear();  // Clear the error flag
+                        cin.sync();
+                        cin.clear();  
                     }
 
                 }
                 cout << "\n\n";
-                // check if shape is circle or not
+                // if shape is circle
                 if (shape == "circle")
                 {
                     // Create Circle object and set its properties
@@ -375,61 +373,66 @@ int main()
                     circle->setName(shape);
                     circle->setContainsWarpSpace(specialtype == "ws");
 
-                    // Get the radius of the circle
+                    // set the radius of the circle
+                    cout << "Please enter the radius of the circle: \n";
                     while (true)
                     {
-                        cout << "Please enter the radius of the circle: ";
                         cin >> radius;
-
                         // Validate radius
-                        while (cin.fail() || radius <= 0)
+                        if (cin.fail() || radius <= 0 || cin.peek() != '\n')
                         {
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
                             cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter a valid radius for the circle: ";
-                            cin >> radius;
+                            cout << "Please enter the radius of the circle: \n";
                         }
-
-                        // Set the radius for the circle
-                        circle->setRadius(radius);
-                        break;
+                        else
+                        {
+                            break;
+                        }
                     }
+                    circle->setRadius(radius);
 
-                    // Get the center coordinates of the circle
+                    // set the center coordinates of the circle
+                    cout << "Please enter x coordinate of center: ";
                     while (true)
                     {
-                        cout << "Please enter x coordinate of center: ";
                         cin >> x;
-
-                        // Validate x coordinate
-                        while (cin.fail())
+                        // Validate x coordinate as integer
+                        if (cin.fail() || cin.peek() != '\n')
                         {
-                            cout << invalidinp;
                             cin.clear();  // Clear the error flag
                             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter x coordinate for center: ";
-                            cin >> x;
-                        }
-
-                        cout << "Please enter y coordinate of center: ";
-                        cin >> y;
-
-                        // Validate y coordinate
-                        while (cin.fail())
-                        {
                             cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter y coordinate for center: ";
-                            cin >> y;
+                            cout << "Please enter x coordinate of center: ";
                         }
-
-                        // Set the center coordinates for the circle
-                        circle->setCoordinates({{x, y}}, circle->getNumCoordinates());
-                        break;
+                        else
+                        {
+                            break;
+                        }
                     }
 
+                    cout << "Please enter y coordinate of center: ";
+                    while (true)
+                    {
+                        cin >> y;
+                        // Validate x coordinate as integer
+                        if (cin.fail() || cin.peek() != '\n')
+                        {
+                            cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << invalidinp;
+                            cout << "Please enter y coordinate of center: ";
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    // Set the center coordinates for the circle
+                    circle->setCoordinates({{x, y}}, circle->getNumCoordinates());
+                     
                     // Add the created Circle object to the vector
                     shapes.push_back(circle);
                 }
@@ -443,30 +446,41 @@ int main()
 
                     for (int i = 0; i < square->getNumCoordinates(); ++i)
                     {
-                        cout << "Please enter x coordinate for point " << i + 1 << ": ";
-                        cin >> x;
-
-                        // Validate x coordinate
-                        while (cin.fail())
+                        // set the coordinates of the square
+                        cout << "Please enter x coordinate "<< i+1 << " for square: ";
+                        while (true)
                         {
-                            cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter x coordinate for point " << i + 1 << ": ";
                             cin >> x;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter x coordinate "<< i+1 << " for square: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
 
-                        cout << "Please enter y coordinate for point " << i + 1 << ": ";
-                        cin >> y;
-
-                        // Validate y coordinate
-                        while (cin.fail())
+                        cout << "Please enter y coordinate "<< i+1 << " for square: ";
+                        while (true)
                         {
-                            cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter y coordinate for point " << i + 1 << ": ";
                             cin >> y;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter y coordinate "<< i+1 << " for square: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
 
                         // Add coordinates to the vector for the square
@@ -479,87 +493,109 @@ int main()
                 }
                 else if (shape == "rectangle")
                 {
-                    // Create Rectangle object and set its properties
+                    // Create rectangle object and set its properties
                     Rectangle* rectangle = new Rectangle();
                     rectangle->setName(shape);
                     rectangle->setContainsWarpSpace(specialtype == "ws");
 
                     for (int i = 0; i < rectangle->getNumCoordinates(); ++i)
                     {
-                        cout << "Please enter x coordinate for point " << i + 1 << ": ";
-                        cin >> x;
-
-                        // Validate x coordinate
-                        while (cin.fail())
+                        // set the coordinates of the rectangle
+                        cout << "Please enter x coordinate "<< i+1 << " for rectangle: ";
+                        while (true)
                         {
-                            cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter x coordinate for point " << i + 1 << ": ";
                             cin >> x;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter x coordinate "<< i+1 << " for rectangle: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
 
-                        cout << "Please enter y coordinate for point " << i + 1 << ": ";
-                        cin >> y;
-
-                        // Validate y coordinate
-                        while (cin.fail())
+                        cout << "Please enter y coordinate "<< i+1 << " for rectangle: ";
+                        while (true)
                         {
-                            cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter y coordinate for point " << i + 1 << ": ";
                             cin >> y;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter y coordinate "<< i+1 << " for rectangle: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
 
-                        // Set coordinates for the rectangle
+                        // Add coordinates to the vector for the rectangle
                         rectangle->setCoordinates({{x, y}}, rectangle->getNumCoordinates());
                     }
 
-                    // Add the created Rectangle object to the vector
+                    // Add the created rectangle object to the vector
                     shapes.push_back(rectangle);
                 }
 
                 else if (shape == "cross")
                 {
-                    // Create Cross object and set its properties
+                    // Create cross object and set its properties
                     Cross* cross = new Cross();
                     cross->setName(shape);
                     cross->setContainsWarpSpace(specialtype == "ws");
 
                     for (int i = 0; i < cross->getNumCoordinates(); ++i)
                     {
-                        cout << "Please enter x coordinate for point " << i + 1 << ": ";
-                        cin >> x;
-
-                        // Validate x coordinate
-                        while (cin.fail())
+                        // set the coordinates of the cross
+                        cout << "Please enter x coordinate "<< i+1 << " for cross: ";
+                        while (true)
                         {
-                            cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter x coordinate for point " << i + 1 << ": ";
                             cin >> x;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter x coordinate "<< i+1 << " for cross: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
 
-                        cout << "Please enter y coordinate for point " << i + 1 << ": ";
-                        cin >> y;
-
-                        // Validate y coordinate
-                        while (cin.fail())
+                        cout << "Please enter y coordinate "<< i+1 << " for cross: ";
+                        while (true)
                         {
-                            cout << invalidinp;
-                            cin.clear();  // Clear the error flag
-                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
-                            cout << "Please enter y coordinate for point " << i + 1 << ": ";
                             cin >> y;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter y coordinate "<< i+1 << " for cross: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
 
-                        // Set coordinates for the cross
+                        // Add coordinates to the vector for the cross
                         cross->setCoordinates({{x, y}}, cross->getNumCoordinates());
                     }
 
-                    // Add the created Cross object to the vector
+                    // Add the created Square object to the vector
                     shapes.push_back(cross);
                 }
 
