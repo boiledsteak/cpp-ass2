@@ -30,7 +30,6 @@ class ShapeTwoD
         vector<pair<int, int>> coordinates;
 
     public:
-        virtual void print() = 0; 
         virtual double computeArea() const = 0; 
         virtual bool isPointInShape(int x, int y) const = 0; 
         virtual bool isPointOnShape(int x, int y) const = 0;
@@ -69,12 +68,6 @@ class Circle : public ShapeTwoD
     public:
         // Default constructor
         Circle() {}
-
-        void print() override
-        {
-            cout << "Circle with radius " << radius << ", named " << getName() << endl;
-        }
-
         
         void setRadius(int r)
         {
@@ -140,11 +133,6 @@ class Square : public ShapeTwoD
         // Default constructor
         Square() {}
 
-        void print() override
-        {
-            cout << "Square named " << getName() << endl;
-        }
-
         double computeArea() const override
         {
             // Assuming the input coordinates are in any order, find the min and max coordinates
@@ -217,12 +205,12 @@ class Square : public ShapeTwoD
         string toString() const override
         {
             stringstream ss;
-            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
-
-            // Add coordinates information
-            ss << ", Coordinates = ";
-            for (const auto& coord : getCoordinates()) {
-                ss << "(" << coord.first << ", " << coord.second << ") ";
+            ss << ShapeTwoD::toString(); // Call the base class toString function
+            int counts=0;
+            for (const auto &coord : coordinates)
+            {
+                ss << "Point ["<< counts << "] : " << "(" << coord.first << ", " << coord.second << ")\n";
+                counts++;
             }
 
             return ss.str();
@@ -244,11 +232,6 @@ class Rectangle : public ShapeTwoD
         // Default constructor
         Rectangle() {}
 
-        void print() override
-        {
-            cout << "Rectangle named " << getName() << endl;
-        }
-
         double computeArea() const override
         {
             // Assuming the input coordinates are in any order, find the min and max coordinates
@@ -318,18 +301,15 @@ class Rectangle : public ShapeTwoD
             return false;
         }
 
-
-
         string toString() const override
         {
             stringstream ss;
             ss << ShapeTwoD::toString(); // Call the base class toString function
-
-            // Add coordinates information
-            ss << ", Coordinates = ";
+            int counts=0;
             for (const auto &coord : coordinates)
             {
-                ss << "(" << coord.first << ", " << coord.second << ") ";
+                ss << "Point ["<< counts << "] : " << "(" << coord.first << ", " << coord.second << ")\n";
+                counts++;
             }
 
             return ss.str();
@@ -350,11 +330,6 @@ class Cross : public ShapeTwoD
     public:
         // Default constructor
         Cross() {}
-
-        void print() override
-        {
-            cout << "Cross named " << getName() << endl;
-        }
 
         double computeArea() const override
         {
@@ -408,12 +383,12 @@ class Cross : public ShapeTwoD
         string toString() const override
         {
             stringstream ss;
-            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
-
-            // Add coordinates information
-            ss << ", Coordinates = ";
-            for (const auto& coord : getCoordinates()) {
-                ss << "(" << coord.first << ", " << coord.second << ") ";
+            ss << ShapeTwoD::toString(); // Call the base class toString function
+            int counts=0;
+            for (const auto &coord : coordinates)
+            {
+                ss << "Point ["<< counts << "] : " << "(" << coord.first << ", " << coord.second << ")\n";
+                counts++;
             }
 
             return ss.str();
@@ -434,7 +409,7 @@ void menuprinter()
     cout << "Welcome to Assignment 2 program!\n\n";
     cout << "1)" << "\tInput sensor data\n"; //the input coords will always be adjacent and clockwise
     cout << "2)" << "\tCompute area (for all records)\n"; // should apply polymorphism and dynamic binding. There should  only be one array. Not one array for each shape
-    cout << "3)" << "\tPrint shapes report\n"; // there may be shapes where there's no point in shape // when printing points on shape, skip the points that user has input // when printing circle on shape, only need to print the top bottom left right edges // to find inside point of circle, find the surrounding box of the circle 
+    cout << "3)" << "\tPrint shapes report\n"; 
     cout << "4)" << "\tSort shape data\n"; // sort by special type and area.
     // ws biggest
     // ws smallest
@@ -442,6 +417,14 @@ void menuprinter()
     // ns smallest
     cout << "5)" << "\tExit\n";
     cout << "\n\nTell me what you want!\n\n";
+}
+
+void smallmenuprinter()
+{
+    cout << "\ta.\tSort by area (ascending)\n";
+    cout << "\tb.\tSort by area (descending)\n";
+    cout << "\tc.\tSort by special type and area\n";
+    cout << "\nPlease select option ('q' to go main menu)\n\n";
 }
 
 
@@ -454,7 +437,6 @@ int main()
     const int arraySize = 99;
     // Create an array of Shape pointers using new
     vector<ShapeTwoD*> shapes;
-
 
     while (progflow == 1)
     {
@@ -761,15 +743,13 @@ int main()
                     shapes.push_back(cross);
                 }
 
+                cout << "\nRecord successfully stored. Going back to main menu...\n\n";
             }
             break;
             case 2:
             {
-                cout << "Computing and printing area for all shapes:\n";
-                for (const ShapeTwoD* shape : shapes)
-                {
-                    cout << "Area of " << shape->getName() << ": " << shape->computeArea() << endl;
-                }
+                cout << ">>>>>>>>>>>>\t"<< "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+                cout << "Computation complete! ("<< shapes.size() <<"records were updated)\n\n";
             }
             break;
             case 3:
@@ -782,18 +762,44 @@ int main()
                     cout << "Shape [" << counter << "]\n";
                     cout << shape->toString() << "\n";
                     // Print all coordinates inside the area of the shape
-                    cout << "Points within shape:\t";
+                    
                     int minX = 0;
                     int minY = 0;
                     int maxX = 12;
                     int maxY = 8;
 
+                    bool hasPointsInside = false;
+                    bool hasPointsOnShape = false;
+                    
+                    // Print all coordinates on the shape
+                    cout << "Points on perimeter:\t";
+                    for (int x = minX; x <= maxX; ++x)
+                    {
+                        for (int y = minY; y <= maxY; ++y)
+                        {
+                            if (shape->isPointOnShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
+                            {
+                                cout << "(" << x << ", " << y << ") ";
+                                hasPointsOnShape = true;
+                            }
+                        }
+                    }
+
+                    if (!hasPointsOnShape)
+                    {
+                        cout << " none!";
+                    }
+
+                    cout << "\n";
+
+                    cout << "Points within shape:\t";
+                    
                     for (const auto &coord : shape->getCoordinates())
                     {
                         if (shape->isPointInShape(coord.first, coord.second))
                         {
                             cout << "(" << coord.first << ", " << coord.second << ") ";
-
+                            hasPointsInside = true;
                             // Update min and max coordinates for the bounding box
                             minX = min(minX, coord.first);
                             minY = min(minY, coord.second);
@@ -810,24 +816,17 @@ int main()
                             if (shape->isPointInShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
                             {
                                 cout << "(" << x << ", " << y << ") ";
+                                hasPointsInside = true;
                             }
                         }
                     }
 
-                    cout << endl;
-                    
-                    // Print all coordinates on the shape
-                    cout << "Points on shape:\t";
-                    for (int x = minX; x <= maxX; ++x)
+                    if (!hasPointsInside)
                     {
-                        for (int y = minY; y <= maxY; ++y)
-                        {
-                            if (shape->isPointOnShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
-                            {
-                                cout << "(" << x << ", " << y << ") ";
-                            }
-                        }
+                        cout << "none!";
                     }
+
+                    cout << "\n";
 
                     cout << "\n\n\n";
                     counter++;
@@ -836,7 +835,42 @@ int main()
             break;
             case 4:
             {
+                char option;
+                cout << ">>>>>>>>>>>>\t" << "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+                smallmenuprinter();
+                while (!(cin >> option) || cin.peek() != '\n' || (option != 'a' && option != 'b' && option != 'c' && option != 'q')) 
+                {
+                    cout << invalidinp;
+                    cin.clear();  // Clear the error flag
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                    smallmenuprinter();
+                }
 
+                switch (option)
+                {
+                    case 'a':
+                        // Handle Option A logic
+                        cout << "\nSort by area (largest to smallest)\n";
+                        break;
+
+                    case 'b':
+                        // Handle Option B logic
+                        cout << "\nSort by area (smallest to largest)\n";
+                        break;
+
+                    case 'c':
+                        // Handle Option C logic
+                        cout << "\nSort by special type and area\n";
+                        break;
+
+                    case 'q':
+                        // Go back to the main menu
+                        break;
+
+                    default:
+                        cout << "Invalid option. Please try again.\n";
+                        break;
+                }
             }
             break;
             case 5:
