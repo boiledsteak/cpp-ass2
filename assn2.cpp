@@ -427,6 +427,91 @@ void smallmenuprinter()
     cout << "\nPlease select option ('q' to go main menu)\n\n";
 }
 
+// Custom comparator function to sort shapes by their areas, largest to smallest
+auto compareShapesByArea = [](const ShapeTwoD* a, const ShapeTwoD* b) 
+{
+    return a->computeArea() > b->computeArea();
+};
+
+// Function to print coordinates information
+void printCoordinatesInfo(const ShapeTwoD* shape, int& minX, int& minY, int& maxX, int& maxY, bool& hasPointsInside, bool& hasPointsOnShape) 
+{
+    for (int x = minX; x <= maxX; ++x) 
+    {
+        for (int y = minY; y <= maxY; ++y) 
+        {
+            if (shape->isPointOnShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end()) 
+            {
+                cout << "(" << x << ", " << y << ") ";
+                hasPointsOnShape = true;
+            }
+        }
+    }
+
+    if (!hasPointsOnShape) 
+    {
+        cout << " none!";
+    }
+
+    cout << "\n";
+
+    cout << "Points within shape:\t";
+
+    for (const auto& coord : shape->getCoordinates()) 
+    {
+        if (shape->isPointInShape(coord.first, coord.second)) 
+        {
+            cout << "(" << coord.first << ", " << coord.second << ") ";
+            hasPointsInside = true;
+            // Update min and max coordinates for the bounding box
+            minX = min(minX, coord.first);
+            minY = min(minY, coord.second);
+            maxX = max(maxX, coord.first);
+            maxY = max(maxY, coord.second);
+        }
+    }
+
+    // Print additional coordinates inside the area that were not input by the user
+    for (int x = minX; x <= maxX; ++x) 
+    {
+        for (int y = minY; y <= maxY; ++y) 
+        {
+            if (shape->isPointInShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end()) 
+            {
+                cout << "(" << x << ", " << y << ") ";
+                hasPointsInside = true;
+            }
+        }
+    }
+
+    if (!hasPointsInside) 
+    {
+        cout << "none!";
+    }
+
+    cout << "\n";
+}
+
+void printShapeInfo(const ShapeTwoD* shape, int counter) 
+{
+    cout << "Shape [" << counter << "]\n";
+    cout << shape->toString() << "\n";
+    // Print all coordinates inside the area of the shape
+
+    int minX = 0;
+    int minY = 0;
+    int maxX = 12;
+    int maxY = 8;
+
+    bool hasPointsInside = false;
+    bool hasPointsOnShape = false;
+
+    // Print all coordinates on the shape
+    cout << "Points on perimeter:\t";
+    printCoordinatesInfo(shape, minX, minY, maxX, maxY, hasPointsInside, hasPointsOnShape);
+
+    cout << "\n\n\n";
+}
 
 int main()
 {
@@ -753,82 +838,14 @@ int main()
             }
             break;
             case 3:
-            {   
+            {
                 int counter = 0;
-                cout << ">>>>>>>>>>>>\t"<< "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
-                cout << "Total number of records available: "<< shapes.size() << "\n\n";
-                for (const ShapeTwoD *shape : shapes)
+                cout << ">>>>>>>>>>>>\t" << "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+                cout << "Total number of records available: " << shapes.size() << "\n\n";
+
+                for (const ShapeTwoD* shape : shapes) 
                 {
-                    cout << "Shape [" << counter << "]\n";
-                    cout << shape->toString() << "\n";
-                    // Print all coordinates inside the area of the shape
-                    
-                    int minX = 0;
-                    int minY = 0;
-                    int maxX = 12;
-                    int maxY = 8;
-
-                    bool hasPointsInside = false;
-                    bool hasPointsOnShape = false;
-                    
-                    // Print all coordinates on the shape
-                    cout << "Points on perimeter:\t";
-                    for (int x = minX; x <= maxX; ++x)
-                    {
-                        for (int y = minY; y <= maxY; ++y)
-                        {
-                            if (shape->isPointOnShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
-                            {
-                                cout << "(" << x << ", " << y << ") ";
-                                hasPointsOnShape = true;
-                            }
-                        }
-                    }
-
-                    if (!hasPointsOnShape)
-                    {
-                        cout << " none!";
-                    }
-
-                    cout << "\n";
-
-                    cout << "Points within shape:\t";
-                    
-                    for (const auto &coord : shape->getCoordinates())
-                    {
-                        if (shape->isPointInShape(coord.first, coord.second))
-                        {
-                            cout << "(" << coord.first << ", " << coord.second << ") ";
-                            hasPointsInside = true;
-                            // Update min and max coordinates for the bounding box
-                            minX = min(minX, coord.first);
-                            minY = min(minY, coord.second);
-                            maxX = max(maxX, coord.first);
-                            maxY = max(maxY, coord.second);
-                        }
-                    }
-
-                    // Print additional coordinates inside the area that were not input by the user
-                    for (int x = minX; x <= maxX; ++x)
-                    {
-                        for (int y = minY; y <= maxY; ++y)
-                        {
-                            if (shape->isPointInShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
-                            {
-                                cout << "(" << x << ", " << y << ") ";
-                                hasPointsInside = true;
-                            }
-                        }
-                    }
-
-                    if (!hasPointsInside)
-                    {
-                        cout << "none!";
-                    }
-
-                    cout << "\n";
-
-                    cout << "\n\n\n";
+                    printShapeInfo(shape, counter);
                     counter++;
                 }
             }
@@ -849,10 +866,21 @@ int main()
                 switch (option)
                 {
                     case 'a':
-                        // Handle Option A logic
-                        cout << "\nSort by area (largest to smallest)\n";
-                        break;
+                    {
+                        cout << ">>>>>>>>>>>>\t" << "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+                        cout << "Total number of records available: " << shapes.size() << "\n\n";
 
+                        // Sort the shapes vector using the custom comparator
+                        sort(shapes.begin(), shapes.end(), compareShapesByArea);
+
+                        int counter = 0;
+                        for (const ShapeTwoD* shape : shapes)
+                        {
+                            printShapeInfo(shape, counter);
+                            counter++;
+                        }
+                    }
+                    break;
                     case 'b':
                         // Handle Option B logic
                         cout << "\nSort by area (smallest to largest)\n";
