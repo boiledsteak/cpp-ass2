@@ -74,6 +74,11 @@ class Circle : public ShapeTwoD
             radius = r;
         }
 
+        int getRadius() const
+        {
+            return radius;
+        }
+
         double computeArea() const override
         {
             return M_PI * radius * radius; // Placeholder logic
@@ -427,11 +432,11 @@ void smallmenuprinter()
     cout << "\nPlease select option ('q' to go main menu)\n\n";
 }
 
-// Custom comparator function to sort shapes by their areas, largest to smallest
-auto compareShapesByArea = [](const ShapeTwoD* a, const ShapeTwoD* b) 
+// false for big to small. true for small to big
+bool compareShapesByArea(const ShapeTwoD* a, const ShapeTwoD* b, bool ascending) 
 {
-    return a->computeArea() > b->computeArea();
-};
+    return ascending ? (a->computeArea() < b->computeArea()) : (a->computeArea() > b->computeArea());
+}
 
 // Function to print coordinates information
 void printCoordinatesInfo(const ShapeTwoD* shape, int& minX, int& minY, int& maxX, int& maxY, bool& hasPointsInside, bool& hasPointsOnShape) 
@@ -496,15 +501,40 @@ void printShapeInfo(const ShapeTwoD* shape, int counter)
 {
     cout << "Shape [" << counter << "]\n";
     cout << shape->toString() << "\n";
-    // Print all coordinates inside the area of the shape
-
-    int minX = 0;
-    int minY = 0;
-    int maxX = 12;
-    int maxY = 8;
+    
+    // Initialize bounding box
+    int minX = -99;
+    int minY = -99;
+    int maxX = 99;
+    int maxY = 99;
 
     bool hasPointsInside = false;
     bool hasPointsOnShape = false;
+
+    // check if shape object is circle
+    if (const auto *circle = dynamic_cast<const Circle *>(shape))
+    {
+        int cx, cy, r;
+        pair<int, int> center = circle->getCoordinates()[0];
+        r = circle->getRadius();
+        cx = center.first;
+        cy = center.second;
+        // Update bounding box based on circle properties
+        minX = min(minX, cx - r);
+        minY = min(minY, cy - r);
+        maxX = max(maxX, cx + r);
+        maxY = max(maxY, cy + r);
+    }
+
+    // Update bounding box for non circle shapes
+    for (const auto &coord : shape->getCoordinates())
+    {
+        // Update min and max coordinates for the bounding box
+        minX = min(minX, coord.first);
+        minY = min(minY, coord.second);
+        maxX = max(maxX, coord.first);
+        maxY = max(maxY, coord.second);
+    }
 
     // Print all coordinates on the shape
     cout << "Points on perimeter:\t";
@@ -512,6 +542,7 @@ void printShapeInfo(const ShapeTwoD* shape, int counter)
 
     cout << "\n\n\n";
 }
+
 
 int main()
 {
@@ -870,8 +901,11 @@ int main()
                         cout << ">>>>>>>>>>>>\t" << "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
                         cout << "Total number of records available: " << shapes.size() << "\n\n";
 
-                        // Sort the shapes vector using the custom comparator
-                        sort(shapes.begin(), shapes.end(), compareShapesByArea);
+                        //sort area big to small
+                        sort(shapes.begin(), shapes.end(), [&](const ShapeTwoD* a, const ShapeTwoD* b) 
+                        {
+                            return compareShapesByArea(a, b, false);
+                        });
 
                         int counter = 0;
                         for (const ShapeTwoD* shape : shapes)
@@ -882,9 +916,24 @@ int main()
                     }
                     break;
                     case 'b':
-                        // Handle Option B logic
-                        cout << "\nSort by area (smallest to largest)\n";
-                        break;
+                    {
+                        cout << ">>>>>>>>>>>>\t" << "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+                        cout << "Total number of records available: " << shapes.size() << "\n\n";
+
+                        //sort area small to big
+                        sort(shapes.begin(), shapes.end(), [&](const ShapeTwoD* a, const ShapeTwoD* b) 
+                        {
+                            return compareShapesByArea(a, b, true);
+                        });
+
+                        int counter = 0;
+                        for (const ShapeTwoD* shape : shapes)
+                        {
+                            printShapeInfo(shape, counter);
+                            counter++;
+                        }
+                    }
+                    break;
 
                     case 'c':
                         // Handle Option C logic
