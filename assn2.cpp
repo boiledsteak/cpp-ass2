@@ -7,179 +7,414 @@ due 8 Feb 2024
 
 =============================*/
 
-#include <iostream>
-#include <string>
 #include <limits>
-#include <cctype>
-#include <algorithm>
-#include <cctype>
+#include <iostream>
+#include <sstream> 
+#include <cmath>   
+#include <string>
 #include <vector>
-#include <map>
+#include <algorithm>
 
 using namespace std;
 
-// my class
-
-// top level parent class
-
-// put in seperate file
-// put constructors and functions in ShapeTwoD.cpp
-// put private and function prototype in ShapeTwoD.h
-
-// put all this in ShapeTwoD.h
-// class ShapeTwoD 
-// {
-//     private:
-//         int id_p; // for testing
-        
-//         string name;
-//         bool containsWarpSpace;
-//         vector<map<int, int>> coords;
-
-//     public: // prototypes
-//         int getId_p();
-//         void setId_p(int id);
-// };
-
-// then in ShapeTwoD.cpp, put all the function logic
-
-// this is how to declare child class that inherits from parent class
-// put this in square.h
-// class square : public ShapeTwoD
-// {
-
-// };
-
 // SEE SLIDES S4F
 
+//  TODO figure out what does the toString in parent need to print and what the toString in child need to print
 
-class ShapeTwoD 
+// Parent class
+class ShapeTwoD
 {
     protected:
-        int id_p; // for testing
-        
         string name;
         bool containsWarpSpace;
-        vector<map<int, int>> coords;
+        vector<pair<int, int>> coordinates;
 
     public:
-        // Getter function for id_p
-        int getId_p() 
-        {
-            return id_p;
-        }
+        virtual void print() = 0; 
+        virtual double computeArea() const = 0; 
+        virtual string toString() const = 0;
+        virtual bool isPointInShape(int x, int y) const = 0; 
+        virtual bool isPointOnShape(int x, int y) const = 0;
+        virtual int getNumCoordinates() const = 0; 
+        virtual ~ShapeTwoD() {} // Virtual destructor
 
-        // Setter function for id_p
-        void setId_p(int id) 
+        // Getters and setters for name, containsWarpSpace, and coordinates
+        string getName() const { return name; }
+        void setName(const string &newName) { name = newName; }
+        bool getContainsWarpSpace() const { return containsWarpSpace; }
+        void setContainsWarpSpace(bool warpSpace) { containsWarpSpace = warpSpace; }
+        const vector<pair<int, int>>& getCoordinates() const { return coordinates; }
+        //when setting coordinates, number of coordinates must match each shape's required number
+        void setCoordinates(const vector<pair<int, int>> &newCoordinates, int numCoordinates)
         {
-            id_p = id;
-        }
-        // Setter function for name
-        void setName(string n) 
-        {
-            name = n;
-        }
-
-        // Setter function for containsWarpSpace
-        void setContainsWarpSpace(bool space) 
-        {
-            containsWarpSpace = space;
-    }
-        // other functions
-        /*
-        This is a virtual function that returns a string containing all the values of the attributes in the shape, excluding the array of vertex data. (However, sub-classes of ShapeTwoD must output the array of vertex data, inclusive of any other attribute's values it inherited) 
-        */        
-        string toString()
-        {
-            return;
-        }
-        /*
-        This is a virtual function. It must be override by the sub-classes and implemented individually. 
-        */
-        // recommend tobe pure virtual function
-        // should have function overriding
-        // to calc area of cross -> find the 5 rectangles. big one minus small one
-        double computeArea()
-        {
-
-            return ;
-        }
-
-        /*
-        This is a virtual function. It takes in a [ x, y ] location and returns a boolean value indicating whether the location is totally within the shape's area. It must be over-ridden by the sub-classes and implemented individually. 
-        */
-        // point is inside the shape 
-        bool isPointInShape(int x, int y)
-        {
-            
-            return;
-        }
-        /*
-        This is a virtual function. It takes in a [ x, y ] location and returns a boolean value indicating whether the location is found on any lines joining the shapes' vertices! It must be over-ridden by the sub­classes and implemented individually. 
-        */
-        // point is touching the border / edge of the shape
-        bool isPointOnShape(int x, int y)
-        {
-            
-            return;
+                coordinates.insert(coordinates.end(), newCoordinates.begin(), newCoordinates.end());
         }
 };
 
-class cross : public ShapeTwoD
+// Child class Circle
+class Circle : public ShapeTwoD
 {
-    private:
-        int vert=12;
-
-    public:
-        // Public constructor. Shortcut syntax to make code shorter
-        cross() : vert(0) {}
-
-        // Getter method
-        int getVert() const 
-        {
-            return vert;
-        }
-};
-
-class square : public ShapeTwoD
-{
-    private:
-        int vert=4;
-    public:
-        // Public constructor. Shortcut syntax to make code shorter
-        square() : vert(0) {}
-
-        // Getter method
-        int getVert() const 
-        {
-            return vert;
-        }
-};
-
-class circle : public ShapeTwoD
-{
-    private:
+    protected:
         int radius;
-    
-    public:
-        // Public constructor. Shortcut syntax to make code shorter
-        circle() : radius(0) {}
+        int numCoordinates = 1; 
 
-        // Getter method
-        int getRadius() const 
+    public:
+        // Default constructor
+        Circle() {}
+
+        void print() override
         {
-            return radius;
+            cout << "Circle with radius " << radius << ", named " << getName() << endl;
         }
 
-        // Setter method
-        void setRadius(int r) 
+        
+        void setRadius(int r)
         {
             radius = r;
         }
 
+        double computeArea() const override
+        {
+            return M_PI * radius * radius; // Placeholder logic
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            int centerX = getCoordinates()[0].first; // Assuming the first coordinate is the center for the circle
+            int centerY = getCoordinates()[0].second;
+
+            // Check if the distance from the point (x, y) to the center is less than the radius
+            bool insideCircle = pow(x - centerX, 2) + pow(y - centerY, 2) < pow(radius, 2);
+
+            // Exclude the center coordinate and return the result
+            return insideCircle && !(x == centerX && y == centerY);
+        }
+
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            int centerX = getCoordinates()[0].first; // Assuming the first coordinate is the center for the circle
+            int centerY = getCoordinates()[0].second;
+
+            // Check if the point (x, y) is on the north, south, east, or west points of the circle
+            return (x == centerX && (y == centerY + radius || y == centerY - radius)) ||
+                (y == centerY && (x == centerX + radius || x == centerX - radius));
+        }
+
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", Radius = " << radius << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
 };
 
+// Child class Square
+class Square : public ShapeTwoD
+{
+    protected:
+        int numCoordinates = 4;
 
+    public:
+        // Default constructor
+        Square() {}
+
+        void print() override
+        {
+            cout << "Square named " << getName() << endl;
+        }
+
+        double computeArea() const override
+        {
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto &coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Calculate and return the area using the min and max coordinates
+            int length = maxX - minX;
+            int width = maxY - minY;
+            return static_cast<double>(length * width);
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto &coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Check if the point is strictly within the rectangle (excluding the edges)
+            bool insideRectangle = (x > minX) && (x < maxX) && (y > minY) && (y < maxY);
+
+            return insideRectangle;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Iterate over each pair of consecutive coordinates to check if the point is on any edge
+            for (int i = 0; i < numCoordinates; ++i)
+            {
+                int x1 = getCoordinates()[i].first;
+                int y1 = getCoordinates()[i].second;
+                int x2 = getCoordinates()[(i + 1) % numCoordinates].first; // Wrap around to the first coordinate for the last edge
+                int y2 = getCoordinates()[(i + 1) % numCoordinates].second;
+
+                // Check if the point is on the line segment defined by (x1, y1) and (x2, y2)
+                if ((x >= min(x1, x2) && x <= max(x1, x2)) && (y >= min(y1, y2) && y <= max(y1, y2)))
+                {
+                    // Check if the point is on the edge (excluding the corners)
+                    if ((x == x1 || x == x2) && (y > min(y1, y2) && y < max(y1, y2)) ||
+                        (y == y1 || y == y2) && (x > min(x1, x2) && x < max(x1, x2)))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
+};
+
+// Child class Rectangle
+class Rectangle : public ShapeTwoD
+{
+    protected:
+        int numCoordinates = 4;
+
+    public:
+        // Default constructor
+        Rectangle() {}
+
+        void print() override
+        {
+            cout << "Rectangle named " << getName() << endl;
+        }
+
+        double computeArea() const override
+        {
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto &coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Calculate and return the area using the min and max coordinates
+            int length = maxX - minX;
+            int width = maxY - minY;
+            return static_cast<double>(length * width);
+        }
+
+        bool isPointInShape(int x, int y) const override
+        {
+            // Assuming the input coordinates are in any order, find the min and max coordinates
+            int minX = numeric_limits<int>::max();
+            int minY = numeric_limits<int>::max();
+            int maxX = numeric_limits<int>::min();
+            int maxY = numeric_limits<int>::min();
+
+            for (const auto &coord : getCoordinates())
+            {
+                minX = min(minX, coord.first);
+                minY = min(minY, coord.second);
+                maxX = max(maxX, coord.first);
+                maxY = max(maxY, coord.second);
+            }
+
+            // Check if the point is strictly within the rectangle (excluding the edges)
+            bool insideRectangle = (x > minX) && (x < maxX) && (y > minY) && (y < maxY);
+
+            return insideRectangle;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Iterate over each pair of consecutive coordinates to check if the point is on any edge
+            for (int i = 0; i < numCoordinates; ++i)
+            {
+                int x1 = getCoordinates()[i].first;
+                int y1 = getCoordinates()[i].second;
+                int x2 = getCoordinates()[(i + 1) % numCoordinates].first; // Wrap around to the first coordinate for the last edge
+                int y2 = getCoordinates()[(i + 1) % numCoordinates].second;
+
+                // Check if the point is on the line segment defined by (x1, y1) and (x2, y2)
+                if ((x >= min(x1, x2) && x <= max(x1, x2)) && (y >= min(y1, y2) && y <= max(y1, y2)))
+                {
+                    // Check if the point is on the edge (excluding the corners)
+                    if ((x == x1 || x == x2) && (y > min(y1, y2) && y < max(y1, y2)) ||
+                        (y == y1 || y == y2) && (x > min(x1, x2) && x < max(x1, x2)))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
+};
+
+// Child class Cross
+class Cross : public ShapeTwoD
+{
+    protected:
+        int numCoordinates = 12;
+
+    public:
+        // Default constructor
+        Cross() {}
+
+        void print() override
+        {
+            cout << "Cross named " << getName() << endl;
+        }
+
+        double computeArea() const override
+        {
+            double rectangleArea = 0.0;
+            vector<pair<int, int>> sortedCoordinates = coordinates;
+            sort(sortedCoordinates.begin(), sortedCoordinates.end());
+
+            for (int i = 0; i < numCoordinates; i += 4)
+            {
+                int x1 = sortedCoordinates[i].first;
+                int y1 = sortedCoordinates[i].second;
+                int x2 = sortedCoordinates[i + 2].first;
+                int y2 = sortedCoordinates[i + 2].second;
+
+                rectangleArea += abs(x2 - x1) * abs(y2 - y1);
+            }
+
+            return rectangleArea;
+        }
+
+
+        bool isPointInShape(int x, int y) const override
+        {//untested lol
+            // Iterate over the rectangles that make up the cross
+            for (int i = 0; i < getNumCoordinates(); i += 4)
+            {
+                int x1 = getCoordinates()[i].first;
+                int y1 = getCoordinates()[i].second;
+                int x2 = getCoordinates()[i + 2].first;
+                int y2 = getCoordinates()[i + 2].second;
+
+                // Check if the point is within the bounding box of the current rectangle
+                bool insideBoundingBox = (x >= min(x1, x2)) && (x <= max(x1, x2)) && (y >= min(y1, y2)) && (y <= max(y1, y2));
+
+                // Check if the point is strictly inside the rectangle (excluding the edges)
+                if (insideBoundingBox && (x > min(x1, x2)) && (x < max(x1, x2)) && (y > min(y1, y2)) && (y < max(y1, y2)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool isPointOnShape(int x, int y) const override
+        {
+            // Placeholder logic
+            return true;
+        }
+
+        string toString() const override
+        {
+            stringstream ss;
+            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+
+            // Add coordinates information
+            ss << ", Coordinates = ";
+            for (const auto& coord : getCoordinates()) {
+                ss << "(" << coord.first << ", " << coord.second << ") ";
+            }
+
+            return ss.str();
+        }
+
+        int getNumCoordinates() const override
+        {
+            return numCoordinates;
+        }
+};
 
 void menuprinter()
 {
@@ -205,19 +440,25 @@ int main()
 {
     int progflow = 1;
     int menuchoice = 0;
-    string invalidinp = "Sorry I do not understand :( Please try again!\n\n";
+    string invalidinp = "\nSorry I do not understand :( Please try again!\n\n";
+
+    const int arraySize = 99;
+    // Create an array of Shape pointers using new
+    vector<ShapeTwoD*> shapes;
+
 
     while (progflow == 1)
     {
         menuprinter();
         // input validation
-        while (!(cin >> menuchoice)) 
+        while (!(cin >> menuchoice) || cin.peek() != '\n') 
         {
-            cin.clear();  // Clear the error flag
-            cin.sync(); // Clear the input buffer
             cout << invalidinp;
+            cin.clear();  // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
             menuprinter();
         }
+
         switch (menuchoice)
         {
             case 1:
@@ -241,8 +482,6 @@ int main()
                     transform(shape.begin(), shape.end(), shape.begin(), ::tolower);
                     if (shape == "square" || shape == "rectangle" || shape == "circle" || shape == "cross")
                     {
-                        //TODO some logic with user input shape name
-
                         cout << "yep! the shape: " << shape << " is correct!\n";
                         break;
                     }
@@ -273,74 +512,315 @@ int main()
                     else
                     {
                         cout << invalidinp;
-                        cin.sync(); // Clear the input buffer
-                        cin.clear();  // Clear the error flag
+                        cin.sync();
+                        cin.clear();  
                     }
 
                 }
                 cout << "\n\n";
-                // check if shape is circle or not
+                // if shape is circle
                 if (shape == "circle")
                 {
-                    //TODO some logic with circle
-                    cout << "yep! this is a circle\n";
+                    // Create Circle object and set its properties
+                    Circle* circle = new Circle();
+                    circle->setName(shape);
+                    circle->setContainsWarpSpace(specialtype == "ws");
+
+                    // set the radius of the circle
+                    cout << "Please enter the radius of the circle: \n";
                     while (true)
                     {
-                        cout << "Please enter x coordinate of center: ";
+                        cin >> radius;
+                        // Validate radius
+                        if (cin.fail() || radius <= 0 || cin.peek() != '\n')
+                        {
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                            cout << invalidinp;
+                            cout << "Please enter the radius of the circle: \n";
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    circle->setRadius(radius);
+
+                    // set the center coordinates of the circle
+                    cout << "Please enter x coordinate of center: ";
+                    while (true)
+                    {
                         cin >> x;
-                        // check if x is an integer
-                        if (cin.fail())
+                        // Validate x coordinate as integer
+                        if (cin.fail() || cin.peek() != '\n')
                         {
-                            cout << invalidinp;
-                            cin.sync(); // Clear the input buffer
                             cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << invalidinp;
+                            cout << "Please enter x coordinate of center: ";
                         }
                         else
                         {
-                            //TODO some logic with x coordinate of circle
-                            cout << "yep! the x coord of " << x << " is correct!\n";
                             break;
                         }
                     }
+
+                    cout << "Please enter y coordinate of center: ";
                     while (true)
                     {
-                        cout << "Please enter y coordinate of center: ";
                         cin >> y;
-                        // check if y is an integer
-                        if (cin.fail())
+                        // Validate x coordinate as integer
+                        if (cin.fail() || cin.peek() != '\n')
                         {
-                            cout << invalidinp;
-                            cin.sync(); // Clear the input buffer
                             cin.clear();  // Clear the error flag
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                            cout << invalidinp;
+                            cout << "Please enter y coordinate of center: ";
                         }
                         else
                         {
-                            //TODO some logic with y coordinate of circle
-                            cout << "yep! the y coord of " << x << " is correct!\n";
                             break;
                         }
                     }
+
+                    // Set the center coordinates for the circle
+                    circle->setCoordinates({{x, y}}, circle->getNumCoordinates());
+                     
+                    // Add the created Circle object to the vector
+                    shapes.push_back(circle);
                 }
-                else
+
+                else if (shape == "square")
                 {
-                    //TODO some logic with non cricle shape
-                    
-                    
+                    // Create Square object and set its properties
+                    Square* square = new Square();
+                    square->setName(shape);
+                    square->setContainsWarpSpace(specialtype == "ws");
+
+                    for (int i = 0; i < square->getNumCoordinates(); ++i)
+                    {
+                        // set the coordinates of the square
+                        cout << "Please enter x coordinate "<< i+1 << " for square: ";
+                        while (true)
+                        {
+                            cin >> x;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter x coordinate "<< i+1 << " for square: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        cout << "Please enter y coordinate "<< i+1 << " for square: ";
+                        while (true)
+                        {
+                            cin >> y;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter y coordinate "<< i+1 << " for square: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        // Add coordinates to the vector for the square
+                        square->setCoordinates({{x, y}}, square->getNumCoordinates());
+                    }
+
+                    // Add the created Square object to the vector
+                    shapes.push_back(square);
 
                 }
+                else if (shape == "rectangle")
+                {
+                    // Create rectangle object and set its properties
+                    Rectangle* rectangle = new Rectangle();
+                    rectangle->setName(shape);
+                    rectangle->setContainsWarpSpace(specialtype == "ws");
 
-                
+                    for (int i = 0; i < rectangle->getNumCoordinates(); ++i)
+                    {
+                        // set the coordinates of the rectangle
+                        cout << "Please enter x coordinate "<< i+1 << " for rectangle: ";
+                        while (true)
+                        {
+                            cin >> x;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter x coordinate "<< i+1 << " for rectangle: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        cout << "Please enter y coordinate "<< i+1 << " for rectangle: ";
+                        while (true)
+                        {
+                            cin >> y;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter y coordinate "<< i+1 << " for rectangle: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        // Add coordinates to the vector for the rectangle
+                        rectangle->setCoordinates({{x, y}}, rectangle->getNumCoordinates());
+                    }
+
+                    // Add the created rectangle object to the vector
+                    shapes.push_back(rectangle);
+                }
+
+                else if (shape == "cross")
+                {
+                    // Create cross object and set its properties
+                    Cross* cross = new Cross();
+                    cross->setName(shape);
+                    cross->setContainsWarpSpace(specialtype == "ws");
+
+                    for (int i = 0; i < cross->getNumCoordinates(); ++i)
+                    {
+                        // set the coordinates of the cross
+                        cout << "Please enter x coordinate "<< i+1 << " for cross: ";
+                        while (true)
+                        {
+                            cin >> x;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter x coordinate "<< i+1 << " for cross: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        cout << "Please enter y coordinate "<< i+1 << " for cross: ";
+                        while (true)
+                        {
+                            cin >> y;
+                            // Validate x coordinate as integer
+                            if (cin.fail() || cin.peek() != '\n')
+                            {
+                                cin.clear();  // Clear the error flag
+                                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                                cout << invalidinp;
+                                cout << "Please enter y coordinate "<< i+1 << " for cross: ";
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        // Add coordinates to the vector for the cross
+                        cross->setCoordinates({{x, y}}, cross->getNumCoordinates());
+                    }
+
+                    // Add the created Square object to the vector
+                    shapes.push_back(cross);
+                }
 
             }
             break;
             case 2:
             {
-                
+                cout << "Computing and printing area for all shapes:\n";
+                for (const ShapeTwoD* shape : shapes)
+                {
+                    cout << "Area of " << shape->getName() << ": " << shape->computeArea() << endl;
+                }
             }
             break;
             case 3:
             {
+                cout << "Printing values stored in all shapes:\n";
+                for (const ShapeTwoD *shape : shapes)
+                {
+                    cout << shape->toString() << endl;
 
+                    // Print all coordinates inside the area of the shape
+                    cout << "All coordinates inside the area: ";
+                    int minX = 0;
+                    int minY = 0;
+                    int maxX = 12;
+                    int maxY = 8;
+
+                    for (const auto &coord : shape->getCoordinates())
+                    {
+                        if (shape->isPointInShape(coord.first, coord.second))
+                        {
+                            cout << "(" << coord.first << ", " << coord.second << ") ";
+
+                            // Update min and max coordinates for the bounding box
+                            minX = min(minX, coord.first);
+                            minY = min(minY, coord.second);
+                            maxX = max(maxX, coord.first);
+                            maxY = max(maxY, coord.second);
+                        }
+                    }
+
+                    // Print additional coordinates inside the area that were not input by the user
+                    for (int x = minX; x <= maxX; ++x)
+                    {
+                        for (int y = minY; y <= maxY; ++y)
+                        {
+                            if (shape->isPointInShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
+                            {
+                                cout << "(" << x << ", " << y << ") ";
+                            }
+                        }
+                    }
+
+                    cout << endl;
+                    
+                    // Print all coordinates on the shape
+                    cout << "All coordinates on the shape: ";
+                    for (int x = minX; x <= maxX; ++x)
+                    {
+                        for (int y = minY; y <= maxY; ++y)
+                        {
+                            if (shape->isPointOnShape(x, y) && find(shape->getCoordinates().begin(), shape->getCoordinates().end(), make_pair(x, y)) == shape->getCoordinates().end())
+                            {
+                                cout << "(" << x << ", " << y << ") ";
+                            }
+                        }
+                    }
+
+                    cout << endl;
+                   
+                }
             }
             break;
             case 4:
@@ -358,5 +838,11 @@ int main()
             break;
         }
     }
+    // Clean up memory using delete
+    for (ShapeTwoD* shape : shapes)
+    {
+        delete shape;
+    }
+    
     return 0;
 }
