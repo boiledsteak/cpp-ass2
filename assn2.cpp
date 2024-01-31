@@ -19,8 +19,6 @@ using namespace std;
 
 // SEE SLIDES S4F
 
-//  TODO figure out what does the toString in parent need to print and what the toString in child need to print
-
 // Parent class
 class ShapeTwoD
 {
@@ -54,7 +52,8 @@ class ShapeTwoD
         const vector<pair<int, int>>& getCoordinates() const { return coordinates; }
         void setCoordinates(const vector<pair<int, int>> &newCoordinates, int numCoordinates)
         {
-                coordinates.insert(coordinates.end(), newCoordinates.begin(), newCoordinates.end());
+            // accumulate all shape objects to coordinates vector
+            coordinates.insert(coordinates.end(), newCoordinates.begin(), newCoordinates.end());
         }
 };
 
@@ -543,6 +542,18 @@ void printShapeInfo(const ShapeTwoD* shape, int counter)
     cout << "\n\n\n";
 }
 
+// Comparison function to sort shapes by special type (ws first), then by area (largest to smallest)
+bool compareShapes(const ShapeTwoD* a, const ShapeTwoD* b) 
+{
+    if (a->getContainsWarpSpace() == b->getContainsWarpSpace()) 
+    {
+        return a->computeArea() > b->computeArea();
+    } 
+    else 
+    {
+        return a->getContainsWarpSpace() > b->getContainsWarpSpace();
+    }
+}
 
 int main()
 {
@@ -598,7 +609,6 @@ int main()
                         cin.sync(); // Clear the input buffer
                         cin.clear();  // Clear the error flag
                     }
-                    
                 }
                 
                 cout << "\n\n";
@@ -934,11 +944,21 @@ int main()
                         }
                     }
                     break;
-
                     case 'c':
-                        // Handle Option C logic
-                        cout << "\nSort by special type and area\n";
-                        break;
+                    {
+                        cout << ">>>>>>>>>>>>\t" << "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+
+                        // sort shapes by special type (ws first), then by area (largest to smallest)
+                        sort(shapes.begin(), shapes.end(), compareShapes);
+
+                        int counter = 0;
+                        for (const ShapeTwoD* shape : shapes)
+                        {
+                            printShapeInfo(shape, counter);
+                            counter++;
+                        }                       
+                    }
+                    break;
 
                     case 'q':
                         // Go back to the main menu
