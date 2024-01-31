@@ -32,11 +32,20 @@ class ShapeTwoD
     public:
         virtual void print() = 0; 
         virtual double computeArea() const = 0; 
-        virtual string toString() const = 0;
         virtual bool isPointInShape(int x, int y) const = 0; 
         virtual bool isPointOnShape(int x, int y) const = 0;
         virtual int getNumCoordinates() const = 0; 
         virtual ~ShapeTwoD() {} // Virtual destructor
+        virtual string toString() const
+        {
+            stringstream ss;
+            ss << "name:\t" << name << endl;
+            ss << "special type:\t" << (containsWarpSpace ? "WS" : "NS") << endl;
+            ss << "area: " << computeArea() << " units square\n";
+            ss << "Vertices:\n";
+
+            return ss.str();
+        }
 
         // Getters and setters for name, containsWarpSpace, and coordinates
         string getName() const { return name; }
@@ -44,7 +53,6 @@ class ShapeTwoD
         bool getContainsWarpSpace() const { return containsWarpSpace; }
         void setContainsWarpSpace(bool warpSpace) { containsWarpSpace = warpSpace; }
         const vector<pair<int, int>>& getCoordinates() const { return coordinates; }
-        //when setting coordinates, number of coordinates must match each shape's required number
         void setCoordinates(const vector<pair<int, int>> &newCoordinates, int numCoordinates)
         {
                 coordinates.insert(coordinates.end(), newCoordinates.begin(), newCoordinates.end());
@@ -105,11 +113,11 @@ class Circle : public ShapeTwoD
         string toString() const override
         {
             stringstream ss;
-            ss << "Name = " << getName() << ", Radius = " << radius << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
-
-            // Add coordinates information
-            ss << ", Coordinates = ";
-            for (const auto& coord : getCoordinates()) {
+            ss << ShapeTwoD::toString(); // Call the base class toString function
+            ss << "Radius:\t" << radius << "\n";
+            ss << "Centre coordinate:\t";
+            for (const auto &coord : coordinates)
+            {
                 ss << "(" << coord.first << ", " << coord.second << ") ";
             }
 
@@ -315,11 +323,12 @@ class Rectangle : public ShapeTwoD
         string toString() const override
         {
             stringstream ss;
-            ss << "Name = " << getName() << ", ContainsWarpSpace = " << (getContainsWarpSpace() ? "true" : "false");
+            ss << ShapeTwoD::toString(); // Call the base class toString function
 
             // Add coordinates information
             ss << ", Coordinates = ";
-            for (const auto& coord : getCoordinates()) {
+            for (const auto &coord : coordinates)
+            {
                 ss << "(" << coord.first << ", " << coord.second << ") ";
             }
 
@@ -764,14 +773,16 @@ int main()
             }
             break;
             case 3:
-            {
-                cout << "Printing values stored in all shapes:\n";
+            {   
+                int counter = 0;
+                cout << ">>>>>>>>>>>>\t"<< "Option\t" << menuchoice << "\t>>>>>>>>>>>>\n\n";
+                cout << "Total number of records available: "<< shapes.size() << "\n\n";
                 for (const ShapeTwoD *shape : shapes)
                 {
-                    cout << shape->toString() << endl;
-
+                    cout << "Shape [" << counter << "]\n";
+                    cout << shape->toString() << "\n";
                     // Print all coordinates inside the area of the shape
-                    cout << "All coordinates inside the area: ";
+                    cout << "Points within shape:\t";
                     int minX = 0;
                     int minY = 0;
                     int maxX = 12;
@@ -806,7 +817,7 @@ int main()
                     cout << endl;
                     
                     // Print all coordinates on the shape
-                    cout << "All coordinates on the shape: ";
+                    cout << "Points on shape:\t";
                     for (int x = minX; x <= maxX; ++x)
                     {
                         for (int y = minY; y <= maxY; ++y)
@@ -818,8 +829,8 @@ int main()
                         }
                     }
 
-                    cout << endl;
-                   
+                    cout << "\n\n\n";
+                    counter++;
                 }
             }
             break;
