@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <limits>
 
 void menuprinter() 
 {
@@ -99,10 +100,10 @@ void printShapeInfo(const ShapeTwoD* shape, int counter)
     cout << shape->toString() << "\n";
     
     // Initialize bounding box
-    int minX = -99;
-    int minY = -99;
-    int maxX = 99;
-    int maxY = 99;
+    int minX = numeric_limits<int>::max();
+    int minY = numeric_limits<int>::max();
+    int maxX = numeric_limits<int>::min();
+    int maxY = numeric_limits<int>::min();
 
     bool hasPointsInside = false;
     bool hasPointsOnShape = false;

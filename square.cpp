@@ -1,6 +1,7 @@
 #include "square.h" 
 #include <algorithm>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 //default constructor
@@ -9,10 +10,10 @@ Square::Square() {}
 double Square::computeArea() const
 {
     // Assuming the input coordinates are in any order, find the min and max coordinates
-    int minX = -99;
-    int minY = -99;
-    int maxX = 99;
-    int maxY = 99;
+    int minX = numeric_limits<int>::max();
+    int minY = numeric_limits<int>::max();
+    int maxX = numeric_limits<int>::min();
+    int maxY = numeric_limits<int>::min();
 
     for (const auto &coord : getCoordinates())
     {
@@ -30,10 +31,10 @@ double Square::computeArea() const
 bool Square::isPointInShape(int x, int y) const
 {
     // Assuming the input coordinates are in any order, find the min and max coordinates
-    int minX = -99;
-    int minY = -99;
-    int maxX = 99;
-    int maxY = 99;
+    int minX = numeric_limits<int>::max();
+    int minY = numeric_limits<int>::max();
+    int maxX = numeric_limits<int>::min();
+    int maxY = numeric_limits<int>::min();
 
     for (const auto &coord : getCoordinates())
     {

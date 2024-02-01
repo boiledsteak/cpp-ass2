@@ -1,6 +1,7 @@
 #include "rectangle.h"
 #include <algorithm>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 //default constructor
@@ -9,10 +10,10 @@ Rectangle::Rectangle() {}
 double Rectangle::computeArea() const
 {
     // Assuming the input coordinates are in any order
-    int minX = -99;
-    int minY = -99;
-    int maxX = 99;
-    int maxY = 99;
+    int minX = numeric_limits<int>::max();
+    int minY = numeric_limits<int>::max();
+    int maxX = numeric_limits<int>::min();
+    int maxY = numeric_limits<int>::min();
 
     for (const auto &coord : getCoordinates())
     {
@@ -30,10 +31,10 @@ double Rectangle::computeArea() const
 bool Rectangle::isPointInShape(int x, int y) const
 {
     // Assuming the input coordinates are in any order
-    int minX = -99;
-    int minY = -99;
-    int maxX = 99;
-    int maxY = 99;
+    int minX = numeric_limits<int>::max();
+    int minY = numeric_limits<int>::max();
+    int maxX = numeric_limits<int>::min();
+    int maxY = numeric_limits<int>::min();
 
     for (const auto &coord : getCoordinates())
     {
