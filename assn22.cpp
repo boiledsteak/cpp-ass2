@@ -83,7 +83,7 @@ class Circle : public ShapeTwoD
 
         double computeArea() const override
         {
-            return M_PI * radius * radius; // Placeholder logic
+            return 3.142 * radius * radius; // Placeholder logic
         }
 
         bool isPointInShape(int x, int y) const override

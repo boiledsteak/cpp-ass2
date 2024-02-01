@@ -14,7 +14,7 @@ int Circle::getRadius() const
 
 double Circle::computeArea() const
 {
-    return M_PI * radius * radius;
+    return 3.142 * radius * radius;
 }
 
 bool Circle::isPointInShape(int x, int y) const

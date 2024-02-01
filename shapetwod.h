@@ -1,5 +1,5 @@
-#ifndef SHAPETWOD_HPP
-#define SHAPETWOD_HPP
+#ifndef SHAPETWOD_H
+#define SHAPETWOD_H
 
 #include <iostream>
 #include <sstream>
@@ -19,7 +19,7 @@ class ShapeTwoD
         virtual bool isPointInShape(int x, int y) const = 0;
         virtual bool isPointOnShape(int x, int y) const = 0;
         virtual int getNumCoordinates() const = 0;
-        virtual ~ShapeTwoD() {} // Virtual destructor
+        virtual ~ShapeTwoD() = default; // Virtual destructor
         virtual string toString() const
         {
             stringstream ss;
